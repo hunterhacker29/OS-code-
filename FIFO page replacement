@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+int main() {
+    int n;
+    
+    printf("Enter the size of the string: ");
+    scanf("%d", &n);
+    
+    int a[n];
+    printf("\nEnter the string: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+    
+    printf("\nString is: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d \t", a[i]);
+    }
+    
+    int fn;
+    printf("\nEnter the frame size: ");
+    scanf("%d", &fn);
+    
+    int frame[fn];
+    int pagefault = 0;
+    int currentindex = 0;
+    
+    for (int i = 0; i < fn; i++) {
+        frame[i] = -1;
+    }
+    
+    int j = 0;
+    int fcount = 0;
+    int hcount = 0;
+   
+    printf("\nString \t Page Frame \t Hit/Fault \n");
+    
+    for (int i = 0; i < n; i++) {
+        printf("%d \t", a[i]);
+        int avail = 0;
+        
+        for (int k = 0; k < fn; k++) {
+            if (frame[k] == a[i]) {
+                avail = 1;
+                hcount++;
+                printf("%d\t", frame[k]);
+                printf("Hit\n");
+                break;
+            }
+        }
+        
+        if (avail == 0) {
+            frame[j] = a[i];
+            j = (j + 1) % fn;
+            fcount++;
+            for (int k = 0; k < fn; k++) {
+                printf("%d\t", frame[k]);
+            }
+            printf("Fault\n");
+        }
+    }
+    
+    printf("Page faults: %d\n", fcount);
+    printf("Hits: %d\n", hcount);
+    
+    return 0;
+}
