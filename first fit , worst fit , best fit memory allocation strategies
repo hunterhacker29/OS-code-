@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Function to find the index of the best fit block for a given process size
+int findBestFit(int blockSize[], int m, int processSize) {
+    int bestIdx = -1;
+    for (int i = 0; i < m; i++) {
+        if (blockSize[i] >= processSize) {
+            if (bestIdx == -1 || blockSize[i] < blockSize[bestIdx]) {
+                bestIdx = i;
+            }
+        }
+    }
+    return bestIdx;
+}
+
+// Function to find the index of the worst fit block for a given process size
+int findWorstFit(int blockSize[], int m, int processSize) {
+    int worstIdx = -1;
+    for (int i = 0; i < m; i++) {
+        if (blockSize[i] >= processSize) {
+            if (worstIdx == -1 || blockSize[i] > blockSize[worstIdx]) {
+                worstIdx = i;
+            }
+        }
+    }
+    return worstIdx;
+}
+
+// Function to allocate memory using First Fit strategy
+void firstFit(int blockSize[], int m, int processSize[], int n, int allocation[]) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (allocation[j] == -1 && blockSize[j] >= processSize[i]) {
+                allocation[j] = i; // Allocate process i to block j
+                break;
+            }
+        }
+    }
+}
+
+int main() {
+    int nb;
+    printf("Enter the number of blocks: ");
+    scanf("%d", &nb);
+
+    int blockSize[nb];
+    printf("\nEnter the size of each block: ");
+    for (int i = 0; i < nb; i++) {
+        scanf("%d", &blockSize[i]);
+    }
+
+    int np;
+    printf("\nEnter the number of processes: ");
+    scanf("%d", &np);
+
+    int processSize[np];
+    printf("\nEnter the size of each process: ");
+    for (int i = 0; i < np; i++) {
+        scanf("%d", &processSize[i]);
+    }
+
+    // Arrays to store the allocation status of each block
+    int allocationFF[nb], allocationBF[nb], allocationWF[nb];
+    for (int i = 0; i < nb; i++) {
+        allocationFF[i] = allocationBF[i] = allocationWF[i] = -1; // Initialize all blocks as unallocated
+    }
+
+    // Memory allocation using First Fit
+    firstFit(blockSize, nb, processSize, np, allocationFF);
+
+    // Best Fit memory allocation strategy
+    for (int i = 0; i < np; i++) {
+        int bestIdx = findBestFit(blockSize, nb, processSize[i]);
+        if (bestIdx != -1) {
+            allocationBF[bestIdx] = i; // Allocate process i to block bestIdx
+        }
+    }
+
+    // Worst Fit memory allocation strategy
+    for (int i = 0; i < np; i++) {
+        int worstIdx = findWorstFit(blockSize, nb, processSize[i]);
+        if (worstIdx != -1) {
+            allocationWF[worstIdx] = i; // Allocate process i to block worstIdx
+        }
+    }
+
+    // Display allocation results
+    printf("\nFirst Fit Allocation:\n");
+    printf("Process\tProcess Size\tBlock Index\tBlock Size\n");
+    for (int i = 0; i < np; i++) {
+        printf("%d\t%d\t\t", i + 1, processSize[i]);
+        if (allocationFF[i] != -1) {
+            printf("%d\t\t%d\n", allocationFF[i] + 1, blockSize[allocationFF[i]]);
+        } else {
+            printf("Not Allocated\n");
+        }
+    }
+
+    printf("\nBest Fit Allocation:\n");
+    printf("Process\tProcess Size\tBlock Index\tBlock Size\n");
+    for (int i = 0; i < np; i++) {
+        printf("%d\t%d\t\t", i + 1, processSize[i]);
+        if (allocationBF[i] != -1) {
+            printf("%d\t\t%d\n", allocationBF[i] + 1, blockSize[allocationBF[i]]);
+        } else {
+            printf("Not Allocated\n");
+        }
+    }
+
+    printf("\nWorst Fit Allocation:\n");
+    printf("Process\tProcess Size\tBlock Index\tBlock Size\n");
+    for (int i = 0; i < np; i++) {
+        printf("%d\t%d\t\t", i + 1, processSize[i]);
+        if (allocationWF[i] != -1) {
+            printf("%d\t\t%d\n", allocationWF[i] + 1, blockSize[allocationWF[i]]);
+        } else {
+            printf("Not Allocated\n");
+        }
+    }
+
+    return 0;
+}
