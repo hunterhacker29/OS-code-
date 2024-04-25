@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int main() {
+    int n;
+    
+    printf("Enter the size of the string: ");
+    scanf("%d", &n);
+    
+    int a[n];
+    printf("\nEnter the string: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+    
+    printf("\nString is: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d \t", a[i]);
+    }
+    
+    int fn;
+    printf("\nEnter the frame size: ");
+    scanf("%d", &fn);
+    
+    int frame[fn];
+    int pagefault = 0;
+    int currentindex = 0;
+    
+    for (int i = 0; i < fn; i++) {
+        frame[i] = -1;
+    }
+    
+    int fcount = 0;
+    int hcount = 0;
+   
+    printf("\nString \t Page Frame \t Hit/Fault \n");
+    
+    for (int i = 0; i < n; i++) {
+        printf("%d \t", a[i]);
+        bool avail = false;
+        int replaceIndex = -1;
+        
+        // Check if the page is already in the frames
+        for (int k = 0; k < fn; k++) {
+            if (frame[k] == a[i]) {
+                avail = true;
+                hcount++;
+                printf("%d\t", frame[k]);
+                printf("Hit\n");
+                break;
+            }
+        }
+        
+        // If the page is not in the frames, find the page to replace
+        if (!avail) {
+            pagefault++;
+            // Check each frame to see which one will not be used for the longest period
+            for (int k = 0; k < fn; k++) {
+                int futureIndex = i + 1;
+                for (int j = i + 1; j < n; j++) {
+                    if (frame[k] == a[j]) {
+                        futureIndex = j;
+                        break;
+                    }
+                }
+                if (futureIndex > replaceIndex) {
+                    replaceIndex = futureIndex;
+                    currentindex = k;
+                }
+            }
+            frame[currentindex] = a[i];
+            fcount++;
+            for (int k = 0; k < fn; k++) {
+                printf("%d\t", frame[k]);
+            }
+            printf("Fault\n");
+        }
+    }
+    
+    printf("Page faults: %d\n", fcount);
+    printf("Hits: %d\n", hcount);
+    
+    return 0;
+}
