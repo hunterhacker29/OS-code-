@@ -1,0 +1,64 @@
+#include <stdio.h>
+
+int main() {
+
+    int n, q;
+    printf("Enter the number of processors: ");
+    scanf("%d", &n);
+
+    printf("\nEnter the time quantum: ");
+    scanf("%d", &q);
+
+    int bt[n];
+    int at[n];
+    int rembt[n];
+    int tat[n];
+    int wt[n];
+    printf("\nEnter the burst time and arrival time: ");
+    for (int i = 0; i < n; i++) {
+        printf("\nEnter the burst time for p%d: ", i + 1);
+        scanf("%d", &bt[i]);
+
+        printf("Enter the arrival time for p%d: ", i + 1);
+        scanf("%d", &at[i]);
+
+        rembt[i] = bt[i];
+    }
+
+    int temp2 = 0;
+
+    while (1) {
+        int count = 0; // Reset count for each iteration
+
+        for (int i = 0; i < n; i++) {
+            if (rembt[i] > 0) {
+                int temp = (rembt[i] < q) ? rembt[i] : q;
+                rembt[i] -= temp;
+                temp2 += temp;
+                tat[i] = temp2;
+                if (rembt[i] == 0)
+                    count++;
+            }
+        }
+
+        if (count == n) // All processes finished execution
+            break;
+
+        printf("\nProcess \t Burst Time \t Turnaround Time \t Waiting Time\n");
+
+        int avgwt = 0;
+        int avgtat = 0;
+        for (int i = 0; i < n; i++) {
+            wt[i] = tat[i] - bt[i];
+            avgwt += wt[i];
+            avgtat += tat[i];
+            printf("%d \t\t %d \t\t %d \t\t\t %d\n", i + 1, bt[i], tat[i], wt[i]);
+        }
+        float avgwtf = (float)avgwt / n;
+        float avgtatf = (float)avgtat / n;
+        printf("Average waiting time = %.2f\n", avgwtf);
+        printf("Average turnaround time = %.2f\n", avgtatf);
+    }
+
+    return 0;
+}
